@@ -1,0 +1,27 @@
+ul_list $items
+    &"file2.js"
+    div[data-list="999"]
+        PAYLOAD
+    ul
+        CALL list $items
+
+ol_list $items $arg1
+    h3
+        "$arg1 + 1 === "
+        ($arg1 + 1)
+    ol
+        CALL list $items
+
+list $items
+    &"file3.css"
+    EACH $ii $items
+        li.item
+            @num $ii
+            "item: "
+            strong
+                $ii
+                "!"
+
+sep
+    section.horizontal-separator
+        "sep-sep-sep"
