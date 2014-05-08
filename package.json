@@ -18,7 +18,7 @@
     "dependencies": {
         "gulp-util": "~2.2.14",
         "through": "~2.3.4",
-        "conkitty": "0.5.6"
+        "conkitty": "~0.5.6"
     },
     "devDependencies": {
         "mocha": "*",

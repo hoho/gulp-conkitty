@@ -12,7 +12,7 @@ describe('gulp-conkitty', function() {
             conkitty({
                 common: 'tmp/ok.common',
                 templates: 'tmp/ok',
-                deps: 'tmp/ok.deps'
+                deps: true
             }),
             [
                 'test/tpl1.ctpl',
@@ -41,7 +41,7 @@ describe('gulp-conkitty', function() {
         testConkitty(
             conkitty({
                 templates: 'tmp/nocommon',
-                deps: 'tmp/nofile.deps'
+                deps: true
             }),
             ['test/tpl2.ctpl'],
             [
