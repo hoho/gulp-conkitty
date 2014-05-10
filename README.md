@@ -23,7 +23,7 @@ gulp.task('conkitty', function() {
 ```
 
 
-Example with dependencies:
+Example with dependencies ([here is actual example](https://github.com/hoho/conkitty/tree/master/example2)):
 
 ```js
 var conkitty = require('gulp-conkitty');
@@ -35,21 +35,23 @@ gulp.task('conkitty', function() {
     var jsFilter = gulpFilter(['**/*.js', '!tpl.js']); // Everything except tpl.js.
 
     return gulp.src(['./src/**/*.ctpl'])
+        // As the result of Conkitty plugin we get templates commons
+        // (in common.js), compiled templates themselves (in tpl.js), and
+        // declared in templates dependencies (because deps setting is true).
         .pipe(conkitty({
             common: 'common.js',
             templates: 'tpl.js',
             deps: true // Append external templates dependencies to the result.
         }))
 
-        // As the result of Conkitty plugin we get templates commons
-        // (in common.js), compiled templates themselves (in tpl.js), and
-        // declared in templates dependencies (because deps setting is true).
+        // Concat all css files to bundle deps.css.
         .pipe(cssFilter)
-        .pipe(concat('deps.css')) // Concat all css files to bundle deps.css.
+        .pipe(concat('deps.css'))
         .pipe(cssFilter.restore())
 
+        // Concat all js files except for tpl.js to bundle deps.js.
         .pipe(jsFilter)
-        .pipe(concat('deps.js')) // Concat all js files except for tpl.js to bundle deps.js.
+        .pipe(concat('deps.js'))
         .pipe(jsFilter.restore())
 
         .pipe(gulp.dest('./build')); // Copy deps.css, deps.js and tpl.js to dst.
