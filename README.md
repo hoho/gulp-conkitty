@@ -54,6 +54,6 @@ gulp.task('conkitty', function() {
         .pipe(concat('deps.js'))
         .pipe(jsFilter.restore())
 
-        .pipe(gulp.dest('./build')); // Copy deps.css, deps.js and tpl.js to dst.
+        .pipe(gulp.dest('./build')); // Copy deps.css, deps.js and tpl.js to ./build.
 });
 ```
