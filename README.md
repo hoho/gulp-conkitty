@@ -14,7 +14,7 @@ Example:
 ```js
 var conkitty = require('gulp-conkitty');
 
-gulp.task('conkitty', ['clean'], function() {
+gulp.task('conkitty', function() {
     // Compile *.ctpl template files to common.js and tpl.js.
     return gulp.src(['./**/*.ctpl'])
         .pipe(conkitty({common: 'common.js', templates: 'tpl.js'}))
@@ -30,7 +30,7 @@ var conkitty = require('gulp-conkitty');
 var gulpFilter = require('gulp-filter');
 var concat = require('gulp-concat');
 
-gulp.task('conkitty', ['clean'], function() {
+gulp.task('conkitty', function() {
     var cssFilter = gulpFilter('**/*.css');
     var jsFilter = gulpFilter(['**/*.js', '!tpl.js']); // Everything except tpl.js.
 
