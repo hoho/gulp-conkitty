@@ -23,7 +23,8 @@ gulp.task('conkitty', function() {
 ```
 
 
-Example with dependencies ([here is actual example](https://github.com/hoho/conkitty/tree/master/example2)):
+Example with dependencies ([here is actual example](https://github.com/hoho/conkitty/tree/master/example2))
+and source map:
 
 ```js
 var conkitty = require('gulp-conkitty');
@@ -41,6 +42,7 @@ gulp.task('conkitty', function() {
         .pipe(conkitty({
             common: 'common.js',
             templates: 'tpl.js',
+            sourcemap: 'tpl.map',
             deps: true // Append external templates dependencies to the result.
         }))
 
@@ -54,6 +56,6 @@ gulp.task('conkitty', function() {
         .pipe(concat('deps.js'))
         .pipe(jsFilter.restore())
 
-        .pipe(gulp.dest('./build')); // Copy deps.css, deps.js and tpl.js to ./build.
+        .pipe(gulp.dest('./build')); // Copy deps.css, deps.js, tpl.js and tpl.map to ./build.
 });
 ```
