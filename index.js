@@ -14,6 +14,32 @@ var Buffer = require('buffer').Buffer;
 var fs = require('fs');
 var path = require('path');
 
+
+function adjustFilename(filename, rebase) {
+    var base = path.resolve('.');
+    var f = path.resolve(filename);
+
+    if (f.substring(0, base.length) === base) {
+        return path.relative(base, f);
+    } else if (rebase) {
+        var cur;
+
+        for (var key in rebase) {
+            if ((f.substring(0, key.length) === key) && (!cur || cur.length < key.length)) {
+                cur = key;
+            }
+        }
+
+        if (cur) {
+            f = f.substring(cur.length + (f[cur.length] === path.sep ? 1 : 0));
+            return path.resolve(base, path.join(rebase[cur], f));
+        }
+    }
+
+    this.emit('error', new PluginError('gulp-conkitty', 'File `' + filename + '` is outside current working directory'));
+}
+
+
 module.exports = function(paths) {
     if (!paths) throw new PluginError('gulp-conkitty', 'Missing `paths` option for gulp-conkitty');
 
@@ -21,12 +47,15 @@ module.exports = function(paths) {
 
     function bufferContents(file) {
         if (file.isNull()) { return; }
-        if (file.isStream()) { return this.emit('error', new PluginError('gulp-conkitty',  'Streaming not supported')); }
+        if (file.isStream()) {
+            this.emit('error', new PluginError('gulp-conkitty',  'Streaming not supported'));
+            return;
+        }
 
         try {
             conkitty.push(path.normalize(path.relative(path.resolve('.'), path.resolve(file.path))), file.contents.toString());
         } catch(e) {
-            return this.emit('error', new PluginError('gulp-conkitty', e.message));
+            this.emit('error', new PluginError('gulp-conkitty', e.message));
         }
     }
 
@@ -43,36 +72,55 @@ module.exports = function(paths) {
         }
 
         var contents;
+        var filename;
 
         if (paths.common && ((contents = conkitty.getCommonCode()))) {
+            filename = adjustFilename.call(this, paths.common);
+            if (!filename) { return; }
+
             this.emit('data', new File({
-                path: paths.common,
+                path: filename,
                 contents: new Buffer(contents)
             }));
         }
 
         if (paths.templates && ((contents = conkitty.getTemplatesCode()))) {
+            filename = adjustFilename.call(this, paths.templates);
+            if (!filename) { return; }
+
             this.emit('data', new File({
-                path: paths.templates,
+                path: filename,
                 contents: new Buffer(contents)
             }));
         }
 
         if (paths.templates && paths.sourcemap && ((contents = conkitty.getSourceMap()))) {
+            filename = adjustFilename.call(this, paths.sourcemap);
+            if (!filename) { return; }
+
             this.emit('data', new File({
-                path: paths.sourcemap,
+                path: filename,
                 contents: new Buffer(contents)
             }));
         }
 
         if (paths.deps) {
-            var self = this;
-            conkitty.getIncludes().forEach(function(filename) {
-                self.emit('data', new File({
+            var includes = conkitty.getIncludes();
+            var rebase = {};
+
+            for (var key in paths.deps) {
+                rebase[path.resolve(key)] = path.resolve(paths.deps[key])
+            }
+
+            for (var i = 0; i < includes.length; i++) {
+                filename = adjustFilename.call(this, includes[i], rebase);
+                if (!filename) { return; }
+
+                this.emit('data', new File({
                     path: filename,
-                    contents: fs.readFileSync(filename)
+                    contents: fs.readFileSync(includes[i])
                 }));
-            });
+            }
         }
 
         this.emit('end');
