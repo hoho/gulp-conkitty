@@ -1,3 +1,4 @@
 notcwd
     &"file4.css"
+    &"file4.js"
     CALL page "Yo" ({})
