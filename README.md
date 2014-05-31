@@ -2,14 +2,14 @@
 
 Compile Conkitty Templates
 
-Install:
+#### Install:
 
 ```sh
 npm install gulp-conkitty --save-dev
 ```
 
 
-Example:
+#### Example:
 
 ```js
 var conkitty = require('gulp-conkitty');
@@ -23,8 +23,7 @@ gulp.task('conkitty', function() {
 ```
 
 
-Example with dependencies ([here is actual example](https://github.com/hoho/conkitty/tree/master/example2))
-and source map:
+#### Example with dependencies ([here is actual example](https://github.com/hoho/conkitty/tree/master/example2)) and source map:
 
 ```js
 var conkitty = require('gulp-conkitty');
@@ -59,3 +58,69 @@ gulp.task('conkitty', function() {
         .pipe(gulp.dest('./build')); // Copy deps.css, deps.js, tpl.js and tpl.map to ./build.
 });
 ```
+
+#### Life outside current working directory
+
+In order to prevent destructivity, every file created by `gulp-conkitty`
+should point somewhere inside current working directory:
+
+```js
+    .pipe(conkitty({templates: 'tpl.js'})) // is ok
+    // but
+    .pipe(conkitty({templates: '../tpl.js'})) // will throw an exception.
+```
+
+It is possible to rebase dependencies from outside your working directory.
+
+Let's say we have project structure like this:
+
+    /root
+        /lib
+            button.css
+                .btn {background: red;}                            
+            button.ctpl
+                button $title
+                    &"button.css"
+                    button.btn[type="button"]
+                        $title
+        /myproj
+            page.ctpl
+                page
+                    CALL button "Hello world"
+            gulpfile.js
+                ...
+                gulp.task('conkitty', function() {
+                    return gulp.src(['./page.ctpl', '../lib/button.ctpl'])
+                        .pipe(conkitty({
+                            templates: 'tpl.js',
+                            deps: true
+                        }))
+                        .pipe(gulp.dest('./build'));
+                });
+                ...
+            package.json
+
+And we run `gulp` from `/root/myproj` directory:
+
+    [gulp] Error in plugin 'gulp-conkitty': File `../lib/button.css` is outside current working directory
+    
+To fix that, we need to rebase outside dependencies and instead of `deps: true`
+in `gulpfile.js` add rebase map:
+
+```js
+    .pipe(conkitty({
+        templates: 'tpl.js',
+        deps: {'../lib': './outerlib/'}
+    }))
+```
+
+After that, `gulp` will run `conkitty` task fine and `/root/myproj/build` 
+directory will look like:
+
+    /build
+        /outerlib
+            button.css
+        tpl.js
+
+You can rebase multiple directories from outside your working directory and
+use relative and absolute paths.
