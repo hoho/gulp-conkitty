@@ -157,7 +157,7 @@ properties:
                 FILES: ['mysuperlib1.ctpl', 'mysuperlib2.ctpl']
             };
 
-Dependencies of external library (if any) will be rebase using `libs` object
+Dependencies of external library (if any) will be rebased using `libs` object
 key:
 
     .pipe(conkitty({
