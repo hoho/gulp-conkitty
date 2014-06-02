@@ -1,7 +1,7 @@
 {
     "name": "gulp-conkitty",
     "description": "Compile Conkitty Templates",
-    "version": "0.5.6",
+    "version": "0.5.7",
     "homepage": "https://github.com/hoho/gulp-conkitty",
     "repository": "git://github.com/hoho/gulp-conkitty.git",
     "author": "Marat Abdullin <dakota@brokenpipe.ru>",

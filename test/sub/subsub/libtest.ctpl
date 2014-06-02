@@ -1,3 +1,4 @@
 libtest
     &"file5.css"
     lib::button
+    lib::checkbox

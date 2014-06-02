@@ -124,3 +124,47 @@ directory will look like:
 
 You can rebase multiple directories from outside your working directory and
 use relative and absolute paths.
+
+#### External libraries of templates
+
+There is a bit of syntax sugar to add external libraries of templates.
+
+    .pipe(conkitty({
+        templates: 'tpl.js',
+        deps: true, // sould be enabled.
+        libs: {
+            // We could have npm package with library of templates.
+            superlib: require('mysuperlib')
+        }
+    }))
+
+In this example `require('mysuperlib')` should return an object with two
+properties:
+
++ `require('mysuperlib').BASE` should be an absolute path to library's base
+   directory
++ `require('mysuperlib').FILES` should be an array of paths to template files.
+
+`mysuperlib` file structure could look like:
+
+    /mysuperlib
+        package.json
+        mysuperlib1.ctpl
+        mysuperlib2.ctpl
+        index.js
+            module.exports = {
+                BASE: __dirname // Actual path to index.js.
+                FILES: ['mysuperlib1.ctpl', 'mysuperlib2.ctpl']
+            };
+
+Dependencies of external library (if any) will be rebase using `libs` object
+key:
+
+    .pipe(conkitty({
+        templates: 'tpl.js',
+        deps: true,
+        libs: {
+            superlib: require('mysuperlib') // Dependencies will go to `superlib/*`,
+            'complex/path/lib': require('mysuperlib2') // Dependencies will go to `complex/path/lib/*`,
+        }
+    }))

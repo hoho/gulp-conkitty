@@ -92,6 +92,7 @@ module.exports = function(settings) {
                 settings.deps[lib.BASE] = libKey;
 
                 lib.FILES.every(function(filename) {
+                    filename = path.resolve(lib.BASE, filename);
                     return pushConkittyFile.call(this, conkitty, filename, fs.readFileSync(filename).toString());
                 }, this);
             }
