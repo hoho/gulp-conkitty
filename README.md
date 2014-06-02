@@ -165,6 +165,6 @@ key:
         deps: true,
         libs: {
             superlib: require('mysuperlib') // Dependencies will go to `superlib/*`,
-            'complex/path/lib': require('mysuperlib2') // Dependencies will go to `complex/path/lib/*`,
+            'complex/path/lib': require('mysuperlib2') // Dependencies will go to `complex/path/lib/*`
         }
     }))
