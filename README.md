@@ -164,7 +164,7 @@ key:
         templates: 'tpl.js',
         deps: true,
         libs: {
-            superlib: require('mysuperlib') // Dependencies will go to `superlib/*`,
+            superlib: require('mysuperlib'), // Dependencies will go to `superlib/*`
             'complex/path/lib': require('mysuperlib2') // Dependencies will go to `complex/path/lib/*`
         }
     }))
