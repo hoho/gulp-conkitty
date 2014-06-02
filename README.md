@@ -153,7 +153,7 @@ properties:
         mysuperlib2.ctpl
         index.js
             module.exports = {
-                BASE: __dirname // Actual path to index.js.
+                BASE: __dirname, // Actual path to index.js.
                 FILES: ['mysuperlib1.ctpl', 'mysuperlib2.ctpl']
             };
 
