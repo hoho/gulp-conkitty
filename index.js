@@ -40,8 +40,8 @@ function adjustFilename(filename, rebase) {
 }
 
 
-module.exports = function(paths) {
-    if (!paths) throw new PluginError('gulp-conkitty', 'Missing `paths` option for gulp-conkitty');
+module.exports = function(settings) {
+    if (!settings) throw new PluginError('gulp-conkitty', 'Missing `settings` option for gulp-conkitty');
 
     var conkitty = new Conkitty();
 
@@ -62,8 +62,8 @@ module.exports = function(paths) {
     function endStream() {
         try {
             conkitty.generate(
-                paths.templates && paths.sourcemap ?
-                    path.normalize(path.relative(path.dirname(path.resolve(paths.templates)), path.resolve(paths.sourcemap)))
+                settings.templates && settings.sourcemap ?
+                    path.normalize(path.relative(path.dirname(path.resolve(settings.templates)), path.resolve(settings.sourcemap)))
                     :
                     undefined
             );
@@ -74,8 +74,8 @@ module.exports = function(paths) {
         var contents;
         var filename;
 
-        if (paths.common && ((contents = conkitty.getCommonCode()))) {
-            filename = adjustFilename.call(this, paths.common);
+        if (settings.common && ((contents = conkitty.getCommonCode()))) {
+            filename = adjustFilename.call(this, settings.common);
             if (!filename) { return; }
 
             this.emit('data', new File({
@@ -84,8 +84,8 @@ module.exports = function(paths) {
             }));
         }
 
-        if (paths.templates && ((contents = conkitty.getTemplatesCode()))) {
-            filename = adjustFilename.call(this, paths.templates);
+        if (settings.templates && ((contents = conkitty.getTemplatesCode()))) {
+            filename = adjustFilename.call(this, settings.templates);
             if (!filename) { return; }
 
             this.emit('data', new File({
@@ -94,8 +94,8 @@ module.exports = function(paths) {
             }));
         }
 
-        if (paths.templates && paths.sourcemap && ((contents = conkitty.getSourceMap()))) {
-            filename = adjustFilename.call(this, paths.sourcemap);
+        if (settings.templates && settings.sourcemap && ((contents = conkitty.getSourceMap()))) {
+            filename = adjustFilename.call(this, settings.sourcemap);
             if (!filename) { return; }
 
             this.emit('data', new File({
@@ -104,12 +104,12 @@ module.exports = function(paths) {
             }));
         }
 
-        if (paths.deps) {
+        if (settings.deps) {
             var includes = conkitty.getIncludes();
             var rebase = {};
 
-            for (var key in paths.deps) {
-                rebase[path.resolve(key)] = path.resolve(paths.deps[key])
+            for (var key in settings.deps) {
+                rebase[path.resolve(key)] = path.resolve(settings.deps[key])
             }
 
             for (var i = 0; i < includes.length; i++) {
