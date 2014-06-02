@@ -37,11 +37,23 @@ function adjustFilename(filename, rebase) {
     }
 
     this.emit('error', new PluginError('gulp-conkitty', 'File `' + filename + '` is outside current working directory'));
+    return false;
+}
+
+
+function pushConkittyFile(conkitty, filename, content) {
+    try {
+        conkitty.push(path.normalize(path.relative(path.resolve('.'), path.resolve(filename))), content);
+        return true;
+    } catch(e) {
+        this.emit('error', new PluginError('gulp-conkitty', e.message));
+        return false;
+    }
 }
 
 
 module.exports = function(settings) {
-    if (!settings) throw new PluginError('gulp-conkitty', 'Missing `settings` option for gulp-conkitty');
+    if (!settings) throw new PluginError('gulp-conkitty', 'Missing `settings` for gulp-conkitty');
 
     var conkitty = new Conkitty();
 
@@ -52,14 +64,39 @@ module.exports = function(settings) {
             return;
         }
 
-        try {
-            conkitty.push(path.normalize(path.relative(path.resolve('.'), path.resolve(file.path))), file.contents.toString());
-        } catch(e) {
-            this.emit('error', new PluginError('gulp-conkitty', e.message));
-        }
+        pushConkittyFile.call(this, conkitty, file.path, file.contents.toString());
     }
 
     function endStream() {
+        if (settings.libs) {
+            var libKey,
+                lib;
+
+            for (libKey in settings.libs) {
+                lib = settings.libs[libKey];
+
+                if (typeof lib.BASE !== 'string' || !(lib.FILES instanceof Array)) {
+                    this.emit('error', new PluginError('gulp-conkitty', '`' + libKey + '.BASE` and `' + libKey + '.FILES` have to be string and array'));
+                    return;
+                }
+
+                if (!settings.deps) {
+                    this.emit('error', new PluginError('gulp-conkitty', '`settings.deps` should be enabled'));
+                    return;
+                }
+
+                if (typeof settings.deps !== 'object') {
+                    settings.deps = {};
+                }
+
+                settings.deps[lib.BASE] = libKey;
+
+                lib.FILES.every(function(filename) {
+                    return pushConkittyFile.call(this, conkitty, filename, fs.readFileSync(filename).toString());
+                }, this);
+            }
+        }
+
         try {
             conkitty.generate(
                 settings.templates && settings.sourcemap ?
@@ -68,7 +105,8 @@ module.exports = function(settings) {
                     undefined
             );
         } catch(e) {
-            return this.emit('error', new PluginError('gulp-conkitty', e.message));
+            this.emit('error', new PluginError('gulp-conkitty', e.message));
+            return;
         }
 
         var contents;
@@ -112,14 +150,22 @@ module.exports = function(settings) {
                 rebase[path.resolve(key)] = path.resolve(settings.deps[key])
             }
 
-            for (var i = 0; i < includes.length; i++) {
-                filename = adjustFilename.call(this, includes[i], rebase);
-                if (!filename) { return; }
+            includes = includes.every(function(include) {
+                filename = adjustFilename.call(this, include, rebase);
+                if (!filename) {
+                    return false;
+                }
 
                 this.emit('data', new File({
                     path: filename,
-                    contents: fs.readFileSync(includes[i])
+                    contents: fs.readFileSync(include)
                 }));
+
+                return true;
+            }, this);
+
+            if (!includes) {
+                return;
             }
         }
 

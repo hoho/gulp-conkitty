@@ -1,0 +1,4 @@
+lib::button
+    &"lib.css"
+    button
+        "Hello"
