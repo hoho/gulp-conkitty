@@ -98,12 +98,24 @@ module.exports = function(settings) {
             }
         }
 
+        var common,
+            noConcatJS;
+
+        if ((common = settings.common)) {
+            noConcatJS = common['concat.js'] === false;
+            common = common.file || common;
+            if (typeof common !== 'string') {
+                common = undefined;
+            }
+        }
+
         try {
             conkitty.generate(
                 settings.templates && settings.sourcemap ?
                     path.normalize(path.relative(path.dirname(path.resolve(settings.templates)), path.resolve(settings.sourcemap)))
                     :
-                    undefined
+                    undefined,
+                noConcatJS
             );
         } catch(e) {
             this.emit('error', new PluginError('gulp-conkitty', e.message));
@@ -113,8 +125,8 @@ module.exports = function(settings) {
         var contents;
         var filename;
 
-        if (settings.common && ((contents = conkitty.getCommonCode()))) {
-            filename = adjustFilename.call(this, settings.common);
+        if (common && ((contents = conkitty.getCommonCode()))) {
+            filename = adjustFilename.call(this, common);
             if (!filename) { return; }
 
             this.emit('data', new File({
