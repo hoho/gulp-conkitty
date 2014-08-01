@@ -168,3 +168,21 @@ key:
             'complex/path/lib': require('mysuperlib2') // Dependencies will go to `complex/path/lib/*`
         }
     }))
+
+
+#### Exclude concat.js from common file
+
+By default [concat.js](https://github.com/hoho/concat.js) is built in common
+file. You can exclude concat.js from common file:
+
+```js
+gulp.task('conkitty', function() {
+    // Compile *.ctpl template files to common.js and tpl.js.
+    return gulp.src(['./**/*.ctpl'])
+        .pipe(conkitty({
+            common: {file: 'common.js', 'concat.js': false},
+            templates: 'tpl.js'
+        }))
+        .pipe(gulp.dest('./build'));
+});
+```
