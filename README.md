@@ -2,14 +2,14 @@
 
 Compile Conkitty Templates
 
-#### Install:
+## Install
 
 ```sh
 npm install gulp-conkitty --save-dev
 ```
 
 
-#### Example:
+## Example
 
 ```js
 var conkitty = require('gulp-conkitty');
@@ -23,7 +23,7 @@ gulp.task('conkitty', function() {
 ```
 
 
-#### Example with dependencies ([here is actual example](https://github.com/hoho/conkitty/tree/master/example2)) and source map:
+## Example with dependencies ([here is actual example](https://github.com/hoho/conkitty/tree/master/example2)) and source map
 
 ```js
 var conkitty = require('gulp-conkitty');
@@ -59,7 +59,7 @@ gulp.task('conkitty', function() {
 });
 ```
 
-#### Life outside current working directory
+## Life outside current working directory
 
 In order to prevent destructivity, every file created by `gulp-conkitty`
 should point somewhere inside current working directory:
@@ -125,7 +125,7 @@ directory will look like:
 You can rebase multiple directories from outside your working directory and
 use relative and absolute paths.
 
-#### External libraries of templates
+## External libraries of templates
 
 There is a bit of syntax sugar to add external libraries of templates.
 
@@ -170,7 +170,7 @@ key:
     }))
 
 
-#### Exclude concat.js from common file
+## Exclude concat.js from common file
 
 By default [concat.js](https://github.com/hoho/concat.js) is built in common
 file. You can exclude concat.js from common file:
@@ -186,3 +186,22 @@ gulp.task('conkitty', function() {
         .pipe(gulp.dest('./build'));
 });
 ```
+
+
+## Passing environment object for precompile expressions
+
+You can pass environment object for
+[precompile expressions](https://github.com/hoho/conkitty#precompile-expressions):
+
+```js
+gulp.task('conkitty', function() {
+    // Compile *.ctpl template files to common.js and tpl.js, pass environment
+    // object for precompile expressions.
+    return gulp.src(['./**/*.ctpl'])
+        .pipe(conkitty({
+            env: {prop1: 111, prop2: 'dark', prop3: true},
+            common: 'common.js',
+            templates: 'tpl.js',
+        }))
+        .pipe(gulp.dest('./build'));
+});

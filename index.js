@@ -55,7 +55,7 @@ function pushConkittyFile(conkitty, filename, content) {
 module.exports = function(settings) {
     if (!settings) throw new PluginError('gulp-conkitty', 'Missing `settings` for gulp-conkitty');
 
-    var conkitty = new Conkitty();
+    var conkitty = new Conkitty(settings.env);
 
     function bufferContents(file) {
         if (file.isNull()) { return; }
