@@ -1,6 +1,6 @@
 /*!
  * gulp-conkitty, https://github.com/hoho/gulp-conkitty
- * (c) 2014 Marat Abdullin, MIT license
+ * (c) 2014-2015 Marat Abdullin, MIT license
  */
 
 'use strict';
