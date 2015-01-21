@@ -1,7 +1,7 @@
 {
     "name": "gulp-conkitty",
     "description": "Compile Conkitty Templates",
-    "version": "0.5.13",
+    "version": "0.5.14",
     "homepage": "https://github.com/hoho/gulp-conkitty",
     "repository": "git://github.com/hoho/gulp-conkitty.git",
     "author": "Marat Abdullin <dakota@brokenpipe.ru>",
@@ -18,7 +18,7 @@
     "dependencies": {
         "gulp-util": "~3.0.2",
         "through": "~2.3.6",
-        "conkitty": "~0.5.18"
+        "conkitty": "~0.5.19"
     },
     "devDependencies": {
         "mocha": "*",
